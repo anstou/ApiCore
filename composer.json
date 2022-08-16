@@ -1,0 +1,24 @@
+{
+  "name": "anst/api-core",
+  "description": "api restful风格核心",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "ApiCore\\": "core/"
+    },
+    "files": [
+      "core/Library/functions.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "anst",
+      "email": "anstou@163.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=8.1",
+    "monolog/monolog": "^3.1"
+  }
+}
