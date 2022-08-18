@@ -1,10 +1,8 @@
 <?php
 
-namespace ApiCore\Library\DataBase\Mysql;
+namespace ApiCore\Library\DataBase\Drive\Mysql;
 
-use ApiCore\Library\ApiRestful\ApiCode;
 use ApiCore\Library\Cache\FileStorage;
-use ApiCore\Library\DataBase\Mysql;
 
 abstract class DataBase
 {
@@ -48,13 +46,18 @@ abstract class DataBase
     public function __construct()
     {
         self::PDO();
-
     }
 
+    /**
+     * 获取PDO对象
+     *
+     * @return \PDO
+     * @throws \Exception
+     */
     public static function PDO(): \PDO
     {
         if (!is_null(self::$PDO)) return self::$PDO;
-        self::$PDO = Mysql::getPDO();
+        self::$PDO = Connect::getPDO();
         return self::$PDO;
     }
 
@@ -89,6 +92,7 @@ abstract class DataBase
      * @param string $sql
      * @param array $bindData
      * @return array
+     * @throws \Exception
      */
     public static function select(string $sql, array $bindData = []): array
     {
@@ -114,7 +118,7 @@ abstract class DataBase
     public static function exists(string $where, array $bindData = [], string $table = null): bool
     {
         $table = is_null($table) ? self::table() : $table;
-        return static::selectOne("SELECT EXISTS ( SELECT * FROM $table WHERE $where ) AS `exists`", $bindData)['exists'] === 1;
+        return static::selectOne(SQL::Exists($table, $where), $bindData)['exists'] === 1;
     }
 
     /**
@@ -128,7 +132,7 @@ abstract class DataBase
     public static function count(string $where, array $bindData = [], string $table = null): int
     {
         $table = is_null($table) ? self::table() : $table;
-        return static::selectOne("SELECT COUNT(*) as `count` FROM $table WHERE $where", $bindData)['count'];
+        return static::selectOne(SQL::Count($table, $where), $bindData)['count'];
     }
 
     /**
@@ -139,11 +143,12 @@ abstract class DataBase
      * @param array $bindData 绑定数据
      * @param string|null $table 指定的表格
      * @return int
+     * @throws \Exception
      */
     public static function delete(string $where, array $bindData = [], string $table = null): int
     {
         $table = is_null($table) ? self::table() : $table;
-        $statement = self::PDO()->prepare("DELETE FROM $table WHERE $where");
+        $statement = self::PDO()->prepare(SQL::Delete($table, $where));
         foreach ($bindData as $k => $data) {
             $statement->bindValue($k + 1, $data);
         }
@@ -176,7 +181,7 @@ abstract class DataBase
         }
         $KeyPlaceholder = implode(',', $keys);
         $ValuePlaceholder = self::getPlaceholder(count($values));
-        $statement = self::PDO()->prepare("insert into $table($KeyPlaceholder) values($ValuePlaceholder)");
+        $statement = self::PDO()->prepare(SQL::Insert($table, $KeyPlaceholder, $ValuePlaceholder));
         foreach ($values as $k => $value) {
             $statement->bindValue($k + 1, $value);
         }
@@ -223,8 +228,7 @@ abstract class DataBase
         }
 
         $KeyPlaceholder = implode(',', $keys);
-        $sql = "UPDATE $table SET $KeyPlaceholder WHERE $where";
-        $statement = static::PDO()->prepare($sql);
+        $statement = static::PDO()->prepare(SQL::Update($table, $where, $KeyPlaceholder));
         foreach (array_merge($values, $bindData) as $k => $value) {
             $statement->bindValue($k + 1, $value);
         }
@@ -266,7 +270,8 @@ abstract class DataBase
 
         try {
 
-            $countSql = "SELECT COUNT(*) as `count` FROM $table $tableJoin $whereSql";
+
+            $countSql = SQL::Count("$table $tableJoin", $whereSql);
             $hashKey = sha1($countSql . json_encode($bindData));
             $cache = (new FileStorage('DataBase'));
             $count = $cache->get($hashKey);

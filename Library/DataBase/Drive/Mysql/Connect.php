@@ -1,11 +1,10 @@
 <?php
 
-namespace ApiCore\Library\DataBase;
+namespace ApiCore\Library\DataBase\Drive\Mysql;
 
 use ApiCore\Library\ApiRestful\ApiCode;
-use ApiCore\Library\Exception\InsideException;
 
-class Mysql
+class Connect
 {
 
     protected static ?\PDO $_pdo = null;

@@ -46,6 +46,7 @@ if (!function_exists('config')) {
      * @param string|null $name 为null时返回整个配置文件
      * @param mixed|null $default
      * @return mixed
+     * @throws Exception
      */
     function config(string $config, string $name = null, mixed $default = null): mixed
     {
@@ -56,10 +57,10 @@ if (!function_exists('config')) {
                 if (is_null($name)) return $arr;
                 return array_deep_get($arr, $name, $default);
             }
-            (new \App\Library\Exception\InsideException($filename . '配置文件json_decode错误', 100))->responseErrByJson();
-        } else {
-            (new \App\Library\Exception\InsideException($filename . '配置文件不存在', 100))->responseErrByJson();
-        }
+            throw new \Exception($filename . '配置文件json_decode错误', 100);
+        } else
+            throw new \Exception($filename . '配置文件不存在', 100);
+
     }
 }
 

@@ -13,10 +13,12 @@ abstract class MiddlewareBase
      * 例外的控制器方法
      * 由继承的中间件来实现它
      *
+     * url,请不要带参数,大小写不敏感,接受通配符*
+     *
      * @var array
      */
     protected array $exceptionUrls = [
-//url,请不要带参数,大小写不敏感,接受通配符*
+
     ];
 
     /**
