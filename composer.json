@@ -1,5 +1,5 @@
 {
-  "name": "anst/api-core",
+  "name": "anstou/api-core",
   "description": "api restful核心包",
   "type": "library",
   "autoload": {
