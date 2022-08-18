@@ -4,10 +4,10 @@
   "type": "library",
   "autoload": {
     "psr-4": {
-      "ApiCore\\": "/"
+      "ApiCore\\": ""
     },
     "files": [
-      "/Library/functions.php"
+      "Library/functions.php"
     ]
   },
   "authors": [

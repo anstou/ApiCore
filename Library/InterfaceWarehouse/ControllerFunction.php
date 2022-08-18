@@ -86,7 +86,7 @@ abstract class ControllerFunction
         $filterData = [];
         if (class_exists($this->route->filter)) {
             /**
-             * @var \App\Library\ApiRestful\ApiRestful
+             * @var ApiRestful $filterReturn
              */
             $filterReturn = (new $this->route->filter($this->request, $this->route->filter_method))->run();
             if ($filterReturn->code !== 0) return $filterReturn;

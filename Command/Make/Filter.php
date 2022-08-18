@@ -15,6 +15,8 @@ class Filter extends Command
 
     public function run(): false|string
     {
+        $path = dirname(__FILE__);
+
         $module_name = $this->param('module_name');
         $filter_name = $this->param('filter_name');
         if (!ModuleBase::hasModule($module_name)) {
@@ -26,8 +28,8 @@ class Filter extends Command
 //            return new ApiRestful(1, '控制器文件已存在');
             return false;
         }
-        $filterTemplatePath = module_path('Application' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'filter.template');
-        $filterCodeStr = file_get_contents($filterTemplatePath);
+
+        $filterCodeStr = file_get_contents($path . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'filter.template');
         $controllerNamespace = "\\App\\Modules\\$module_name\\Controllers\\$filter_name";
         $filterCodeStr = str_replace(['{module_name}', '{filter_name}', '{controller_namespace}'], [$module_name, $filter_name, $controllerNamespace], $filterCodeStr);
         filePutContents($filterDirname, $filterCodeStr);

@@ -15,6 +15,9 @@ class Controller extends Command
 
     public function run(): bool
     {
+        $path = dirname(__FILE__);
+
+
         $module_name = $this->param('module_name');
         $controller_name = $this->param('controller_name');
         if (!ModuleBase::hasModule($module_name)) {
@@ -26,7 +29,7 @@ class Controller extends Command
 //            return new ApiRestful(1, '控制器文件已存在');
             return false;
         }
-        $controllerTemplatePath = module_path('Application' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'controller.template');
+        $controllerTemplatePath = $path . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'controller.template';
         $controllerCodeStr = file_get_contents($controllerTemplatePath);
         $controllerCodeStr = str_replace(['{module_name}', '{controller_name}'], [$module_name, $controller_name], $controllerCodeStr);
 

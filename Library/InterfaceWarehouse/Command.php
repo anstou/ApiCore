@@ -27,7 +27,8 @@ abstract class Command
             if (array_key_exists($paramKey, $params) || array_key_exists($paramKey, $defaultParams)) {
                 $this->paramData[$paramKey] = $defaultParams[$paramKey] ?? $params[$paramKey];
             } else {
-                throw new \Exception($paramKey . '为空');
+                echo $paramKey . '必填', PHP_EOL;
+                exit;
             }
         }
     }
