@@ -16,6 +16,7 @@
       "email": "anstou@163.com"
     }
   ],
+  "license": "MIT",
   "minimum-stability": "dev",
   "require": {
     "php": ">=8.1",
