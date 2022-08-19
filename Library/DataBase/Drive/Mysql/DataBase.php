@@ -264,14 +264,13 @@ abstract class DataBase
 
         $selectStr = implode(',', $select);
 
-        $whereSql = empty($where) ? '' : "WHERE $where";
 
-        $sql = "SELECT $selectStr FROM `$table` $tableJoin inner join (SELECT `$table`.`$primaryKey` from `$table` $tableJoin $whereSql order by `$table`.`$primaryKey` $orderBy limit $skip,$pageSize) filter_table ON filter_table.`$primaryKey`=`$table`.`$primaryKey` ORDER BY `$table`.`$primaryKey` $orderBy";
+        $mainSql = SQL::Select("`$table`.`$primaryKey`", "`$table` $tableJoin", $where, "order by `$table`.`$primaryKey` $orderBy limit $skip,$pageSize");
+        $sql = SQL::Select($selectStr, "`$table` $tableJoin inner join ($mainSql) filter_table ON filter_table.`$primaryKey`=`$table`.`$primaryKey`", '', "ORDER BY `$table`.`$primaryKey` $orderBy");
 
         try {
 
-
-            $countSql = SQL::Count("$table $tableJoin", $whereSql);
+            $countSql = SQL::Count("$table $tableJoin", $where);
             $hashKey = sha1($countSql . json_encode($bindData));
             $cache = (new FileStorage('DataBase'));
             $count = $cache->get($hashKey);

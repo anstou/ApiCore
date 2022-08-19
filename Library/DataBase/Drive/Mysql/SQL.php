@@ -89,7 +89,8 @@ class SQL
      */
     public static function Select(string $select, string $table, string $where, string $extra = ''): string
     {
-        return "SELECT $select FROM $table WHERE $where $extra";
+        $where = empty($where) ? '' : 'WHERE ' . $where;
+        return "SELECT $select FROM $table $where $extra";
     }
 
 }

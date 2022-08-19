@@ -386,7 +386,7 @@ if (!function_exists('cliParams')) {
     function cliParams(): array
     {
         global $argv;
-        $params = $argv;
+        $params = $argv ?? [];
         $data = [];
         foreach ($params as $param) {
             $d = explode('=', $param);

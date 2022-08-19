@@ -24,7 +24,7 @@ class ControllerHelp extends Command
         $controller = str_replace(['.php', DIRECTORY_SEPARATOR], ['', '\\'], $mc[1]);
 
         $controllerNamespace = "\\App\\Modules\\$module\\Controllers\\$controller";
-        $filterNamespace = "\\App\\Modules\\$module\\Filter\\$controller";
+        $filterNamespace = "\\App\\Modules\\$module\\Filters\\$controller";
 
 
         if (!class_exists($controllerNamespace)) {
@@ -50,7 +50,7 @@ class ControllerHelp extends Command
         foreach ($reflection->getMethods() as $method) {
             $controllerMethodName = $method->getName();
             if ($method->isProtected() && preg_match('/^[A-Z]+\w+Action$/', $controllerMethodName)) {
-                $filterAction = str_replace('Action', 'Filter', $controllerMethodName);
+                $filterAction = str_replace('Action', 'Filters', $controllerMethodName);
                 if (!$filterReflection->hasMethod($filterAction)) {
 
                     $params = $method->getParameters();

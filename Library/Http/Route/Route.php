@@ -68,7 +68,7 @@ class Route
                     }
                     $parent = strtolower(str_replace('\\', '/', str_replace(['\\App\\Modules\\', '\\Controllers'], '', $className)));
 
-                    $filterClassName = str_replace('\\App\\Modules\\' . $moduleName . '\\Controllers\\', '\\App\\Modules\\' . $moduleName . '\\Filter\\', $className);
+                    $filterClassName = str_replace('\\App\\Modules\\' . $moduleName . '\\Controllers\\', '\\App\\Modules\\' . $moduleName . '\\Filters\\', $className);
                     $filterMethod = ucfirst($name) . 'Filter';
 
                     if (class_exists($filterClassName)) {

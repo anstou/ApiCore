@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\{module_name}\Filter;
+namespace App\Modules\{module_name}\Filters;
 
 use ApiCore\Library\ApiRestful\ApiRestful;
 use ApiCore\Library\InterfaceWarehouse\Filter;
