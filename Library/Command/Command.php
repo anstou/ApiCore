@@ -1,9 +1,15 @@
 <?php
 
-namespace ApiCore\Library\InterfaceWarehouse;
+namespace ApiCore\Library\Command;
 
 abstract class Command
 {
+    /**
+     * 初始化的命令行们
+     * @var array
+     */
+    private static array $commands = [];
+
     /**
      * 需要哪些key
      * @var string[]
@@ -70,5 +76,24 @@ abstract class Command
             return (new $command($params))->run();
         }
         return throw new \Exception($command . '::class不存在');
+    }
+
+    /**
+     * 外部command命令存在的文件夹
+     *
+     * @param string $commandPath
+     * @return void
+     */
+    public static function Init(string $commandPath): void
+    {
+        $list = [];
+        $filenames = scandir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Commands');
+        if (is_array($filenames)) foreach ($filenames as $filename) {
+            if ($filename === '.' || $filename === '..') continue;
+            if(is_dir($filename)){
+
+            }
+
+        }
     }
 }

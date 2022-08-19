@@ -10,7 +10,6 @@ use ApiCore\Library\Http\Request\Headers;
 abstract class DataWarehouse implements \ArrayAccess, \Iterator
 {
 
-    private static int|string $_position = 0;
 
     public function __construct(protected array $Data = [])
     {

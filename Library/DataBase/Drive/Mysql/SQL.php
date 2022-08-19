@@ -50,7 +50,7 @@ class SQL
      * @param string $ValuePlaceholder 键值占位 基本传入为对应$KeyPlaceholder数量的"?"
      * @return string
      */
-    public static function Insert(string $table, string $KeyPlaceholder,string $ValuePlaceholder): string
+    public static function Insert(string $table, string $KeyPlaceholder, string $ValuePlaceholder): string
     {
         return "insert into $table($KeyPlaceholder) values($ValuePlaceholder)";
     }
@@ -79,4 +79,17 @@ class SQL
     {
         return "UPDATE $table SET $KeyPlaceholder WHERE $where";
     }
+
+    /**
+     * @param string $select 要查询的数据
+     * @param string $table 表名
+     * @param string $where 条件 a=? AND b=? OR ....
+     * @param string $extra 额外的,会增加在where后
+     * @return string
+     */
+    public static function Select(string $select, string $table, string $where, string $extra = ''): string
+    {
+        return "SELECT $select FROM $table WHERE $where $extra";
+    }
+
 }

@@ -1,10 +1,9 @@
 <?php
 
-namespace ApiCore\Command\IDEHelp;
+namespace ApiCore\Library\Command\Commands\IDEHelp;
 
-use ApiCore\Command\Make\Filter;
-use ApiCore\Library\ApiRestful\ApiRestful;
-use ApiCore\Library\InterfaceWarehouse\Command;
+use ApiCore\Library\Command\Command;
+use ApiCore\Library\Command\Commands\Make\Filter;
 
 class ControllerHelp extends Command
 {

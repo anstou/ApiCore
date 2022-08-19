@@ -1,9 +1,8 @@
 <?php
 
-namespace ApiCore\Command\Make;
+namespace ApiCore\Library\Command\Commands\Make;
 
-use ApiCore\Library\ApiRestful\ApiRestful;
-use ApiCore\Library\InterfaceWarehouse\Command;
+use ApiCore\Library\Command\Command;
 use ApiCore\Library\Module\Module as ModuleBase;
 
 class Controller extends Command

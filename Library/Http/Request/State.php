@@ -2,6 +2,7 @@
 
 namespace ApiCore\Library\Http\Request;
 
+use ApiCore\Library\Http\Request\State\User;
 use ApiCore\Library\InterfaceWarehouse\DataWarehouse;
 use ReturnTypeWillChange;
 
@@ -12,5 +13,11 @@ use ReturnTypeWillChange;
 class State extends DataWarehouse
 {
 
+    public User $User;
 
+    public function __construct(protected array $Data = [])
+    {
+        parent::__construct($Data);
+        $this->User = new User([]);
+    }
 }
