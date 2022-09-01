@@ -22,7 +22,7 @@ class Filter extends Command
 //            return new ApiRestful(1, '模块不存在');
             return false;
         }
-        $filterDirname = ModuleBase::getModulePath($module_name . DIRECTORY_SEPARATOR . 'Filter' . DIRECTORY_SEPARATOR . $filter_name . '.php');
+        $filterDirname = ModuleBase::getModulePath($module_name . DIRECTORY_SEPARATOR . 'Filters' . DIRECTORY_SEPARATOR . $filter_name . '.php');
         if (file_exists($filterDirname)) {
 //            return new ApiRestful(1, '控制器文件已存在');
             return false;

@@ -50,7 +50,7 @@ class ControllerHelp extends Command
         foreach ($reflection->getMethods() as $method) {
             $controllerMethodName = $method->getName();
             if ($method->isProtected() && preg_match('/^[A-Z]+\w+Action$/', $controllerMethodName)) {
-                $filterAction = str_replace('Action', 'Filters', $controllerMethodName);
+                $filterAction = str_replace('Action', 'Filter', $controllerMethodName);
                 if (!$filterReflection->hasMethod($filterAction)) {
 
                     $params = $method->getParameters();

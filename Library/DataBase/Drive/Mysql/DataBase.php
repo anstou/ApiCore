@@ -190,6 +190,24 @@ abstract class DataBase
     }
 
     /**
+     * SQL级别插入
+     *
+     * @param string $sql
+     * @param array $values
+     * @return int
+     * @throws \Exception
+     */
+    public static function InsertBySQL(string $sql, array $values = []): int
+    {
+        $statement = self::PDO()->prepare($sql);
+        foreach ($values as $k => $value) {
+            $statement->bindValue($k + 1, $value);
+        }
+        self::PDO()->lastInsertId();
+        return $statement->execute() ? $statement->rowCount() : 0;
+    }
+
+    /**
      * 插入数据并获取id
      *
      * @param array $data 要插入的数据 [key=>val,key2.=>val2...],所有的key会与$this->columns判断是否存在
