@@ -45,49 +45,55 @@ abstract class Command
      * 现在没空去弄智能的了
      * 先暂时这样
      *
-     * @param string $commandPath
+     * @param string[] $commandPaths
      * @return void
      * @throws \ReflectionException
      */
-    public static function Init(string $commandPath): void
+    public static function Init(array $commandPaths): void
     {
         $keyWords = [
             'api-core' . DIRECTORY_SEPARATOR . 'Library' => 'ApiCore\Library',
             'app' . DIRECTORY_SEPARATOR . 'Commands' => 'App\Commands'
         ];
+        foreach ($commandPaths as $commandPath) {
+            if (empty($commandPath)) continue;
 
-        $list = [];
-        $commandPath = empty($commandPath) ? dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Commands' : $commandPath;
-        $filenames = scandir($commandPath);
-        if (is_array($filenames)) foreach ($filenames as $filename) {
-            if ($filename === '.' || $filename === '..') continue;
-            $tName = $commandPath . DIRECTORY_SEPARATOR . $filename;
-            if (is_dir($tName) && preg_match('/^[A-Z]+/', $tName) > 0) {
-                self::Init($commandPath . DIRECTORY_SEPARATOR . $filename);
-            } elseif (is_file($tName) && preg_match('/^[A-Z]+[a-zA-Z]+.php$/', $filename) > 0) {
+            $filenames = scandir($commandPath);
+            if (is_array($filenames)) foreach ($filenames as $filename) {
+                if ($filename === '.' || $filename === '..') continue;
 
-
-                $tName = str_replace([...array_keys($keyWords), '.php'], [... array_values($keyWords), ''], $tName);
-
-                $className = '';
-                foreach ($keyWords as $str) {
-                    $className = strstr($tName, $str);
-                    if (is_string($className)) break;
+                $tName = $commandPath . DIRECTORY_SEPARATOR . $filename;
+                if (is_dir($tName) && preg_match('/^[A-Z]+/', $tName) > 0) {
+                    self::Init([$commandPath . DIRECTORY_SEPARATOR . $filename]);
+                    continue;
                 }
 
-                if (is_string($className) && class_exists($className)) {
-                    $r = new \ReflectionClass($className);
-                    $alias = $r->getStaticPropertyValue('Alias');
-                    if ($r->isInstantiable() && $r->isSubclassOf(CommandKernel::class) && !empty($alias)) {
-                        static::PushCommand($alias, [
-                            'class' => $className,
-                            'params' => $r->getProperty('Params')->getValue()
-                        ]);
+                if (is_file($tName) && preg_match('/^[A-Z]+[a-zA-Z]+.php$/', $filename) > 0) {
+                    $tName = str_replace([...array_keys($keyWords), '.php'], [... array_values($keyWords), ''], $tName);
+
+                    $className = '';
+                    foreach ($keyWords as $str) {
+                        $className = strstr($tName, $str);
+                        if (is_string($className)) break;
                     }
-                }
+                    if (is_string($className) && class_exists($className)) {
+                        $r = new \ReflectionClass($className);
+                        $alias = $r->hasProperty('Alias') ? $r->getStaticPropertyValue('Alias') : '';
+                        if ($r->isInstantiable() && $r->isSubclassOf(CommandKernel::class) && !empty($alias)) {
+                            static::PushCommand($alias, [
+                                'class' => $className,
+                                'params' => $r->getProperty('Params')->getDefaultValue()
+                            ]);
+                        }
+                    }
 
-            }
-        }
+                }//if (is_file($tName) && preg_match('/^[A-Z]+[a-zA-Z]+.php$/', $filename) > 0)
+
+
+            }//if (is_array($filenames)) foreach ($filenames as $filename)
+
+        }//foreach ($commandPaths as $commandPath)
+
     }
 
     /**
