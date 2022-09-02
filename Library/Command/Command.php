@@ -2,6 +2,8 @@
 
 namespace ApiCore\Library\Command;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 abstract class Command
 {
     /**
@@ -55,6 +57,7 @@ abstract class Command
             'api-core' . DIRECTORY_SEPARATOR . 'Library' => 'ApiCore\Library',
             'app' . DIRECTORY_SEPARATOR . 'Commands' => 'App\Commands'
         ];
+        $commandPaths[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Commands';
         foreach ($commandPaths as $commandPath) {
             if (empty($commandPath)) continue;
 
@@ -116,12 +119,12 @@ abstract class Command
     {
         $params = cliParams();
         $alias = $params[1] ?? '';
-        $className = static::$Commands[$alias] ?? '';
-        if (empty($className)) {
+        $command = static::$Commands[$alias] ?? [];
+        if (empty($command)) {
             echo '没有要运行的命令', PHP_EOL;
             return 0;
         }
-        return static::Dispatch($className, $params);
+        return static::Dispatch($command['class'], $params);
     }
 
 }
