@@ -3,20 +3,26 @@
 namespace ApiCore\Library\Command\Commands\IDEHelp;
 
 use ApiCore\Library\Command\Command;
+use ApiCore\Library\Command\CommandKernel;
 use ApiCore\Library\Command\Commands\Make\Filter;
 
-class ControllerHelp extends Command
+class ControllerHelp extends CommandKernel
 {
 
-    protected array $params = ['--controller'];
+    /**
+     * @var string|null 命令别名
+     */
+    public static ?string $Alias = 'ControllerHelp';
+
+    protected  array $Params = ['--controller'];
 
 
     /**
      * @throws \Exception
      */
-    public function run(): int
+    public function Run(): int
     {
-        $controllerPath = $this->param('--controller');
+        $controllerPath = $this->Param('--controller');
         $p = explode('app' . DIRECTORY_SEPARATOR . 'Modules' . DIRECTORY_SEPARATOR, $controllerPath);
         $appPath = $p[0];
         $mc = explode(DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR, $p[1]);
@@ -34,7 +40,7 @@ class ControllerHelp extends Command
         $reflection = new \ReflectionClass($controllerNamespace);
         if (!class_exists($filterNamespace)) {
 
-            $filterPathname = Command::dispatch(Filter::class, ['module_name' => $module, 'filter_name' => $controller]);
+            $filterPathname = Command::Dispatch(Filter::class, ['module_name' => $module, 'filter_name' => $controller]);
             if (!is_string($filterPathname)) {
                 throw new \Exception('过滤器创建失败');
             }

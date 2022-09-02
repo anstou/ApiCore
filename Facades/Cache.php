@@ -7,9 +7,9 @@ use ApiCore\Library\InterfaceWarehouse\Facade;
 /**
  *
  * @method static bool has(string $key)
- * @method static static set(string $key, mixed $data, null|int|\DateInterval $ttl = null)
+ * @method static bool set(string $key, mixed $data, null|int|\DateInterval $ttl = null)
  * @method static mixed get(string $key, mixed $default = null)
- * @method static static delete(string $key)
+ * @method static bool delete(string $key)
  * @method static void setCacheName(string $cacheName = '')
  * @method static string getCacheName()
  * @method static bool setMultiple(iterable $values, null|int|\DateInterval $ttl = null)

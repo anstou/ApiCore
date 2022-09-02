@@ -3,21 +3,27 @@
 namespace ApiCore\Library\Command\Commands\Make;
 
 use ApiCore\Library\Command\Command;
+use ApiCore\Library\Command\CommandKernel;
 use ApiCore\Library\Module\Module as ModuleBase;
 
-class Filter extends Command
+class Filter extends CommandKernel
 {
-    protected array $params = [
+    /**
+     * @var string|null 命令别名
+     */
+    public static ?string $Alias = 'make:filter';
+
+    protected  array $Params = [
         'module_name',
         'filter_name',
     ];
 
-    public function run(): false|string
+    public function Run(): false|string
     {
         $path = dirname(__FILE__);
 
-        $module_name = $this->param('module_name');
-        $filter_name = $this->param('filter_name');
+        $module_name = $this->Param('module_name');
+        $filter_name = $this->Param('filter_name');
         if (!ModuleBase::hasModule($module_name)) {
 //            return new ApiRestful(1, '模块不存在');
             return false;

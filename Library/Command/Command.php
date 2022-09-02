@@ -8,58 +8,7 @@ abstract class Command
      * 初始化的命令行们
      * @var array
      */
-    private static array $commands = [];
-
-    /**
-     * 需要哪些key
-     * @var string[]
-     */
-    protected array $params = [];
-
-    /**
-     * 将需要的key存起来的数据
-     *
-     * @var array
-     */
-    private array $paramData = [];
-
-
-    abstract public function run(): mixed;
-
-    final public function __construct(array $defaultParams = [])
-    {
-        $params = cliParams();
-        foreach ($this->params as $paramKey) {
-            if (array_key_exists($paramKey, $params) || array_key_exists($paramKey, $defaultParams)) {
-                $this->paramData[$paramKey] = $defaultParams[$paramKey] ?? $params[$paramKey];
-            } else {
-                echo $paramKey . '必填', PHP_EOL;
-                exit;
-            }
-        }
-    }
-
-    /**
-     * 获取参数
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    final protected function param(string $key, mixed $default = null): mixed
-    {
-        return $this->paramData[$key] ?? $default;
-    }
-
-    /**
-     * 获取所有参数
-     *
-     * @return array
-     */
-    final protected function params(): array
-    {
-        return $this->paramData;
-    }
+    private static array $Commands = [];
 
     /**
      * 快捷使用控制命令
@@ -69,7 +18,7 @@ abstract class Command
      * @return mixed
      * @throws \Exception
      */
-    final public static function dispatch(string $command, array $params = []): mixed
+    final public static function Dispatch(string $command, array $params = []): mixed
     {
         if (static::class !== self::class) throw new \Exception('请从' . self::class . '中调用dispatch');
         if (class_exists($command)) {
@@ -79,21 +28,94 @@ abstract class Command
     }
 
     /**
-     * 外部command命令存在的文件夹
+     * 加入一个command
+     *
+     * @param string $alias 别名
+     * @param array $commandData ['class','params]  command类
+     * @return void
+     */
+    final public static function PushCommand(string $alias, array $commandData): void
+    {
+        static::$Commands[$alias] = $commandData;
+    }
+
+    /**
+     * command命令存在的文件夹
+     * 里面的实现不太智能
+     * 现在没空去弄智能的了
+     * 先暂时这样
      *
      * @param string $commandPath
      * @return void
+     * @throws \ReflectionException
      */
     public static function Init(string $commandPath): void
     {
+        $keyWords = [
+            'api-core' . DIRECTORY_SEPARATOR . 'Library' => 'ApiCore\Library',
+            'app' . DIRECTORY_SEPARATOR . 'Commands' => 'App\Commands'
+        ];
+
         $list = [];
-        $filenames = scandir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Commands');
+        $commandPath = empty($commandPath) ? dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Commands' : $commandPath;
+        $filenames = scandir($commandPath);
         if (is_array($filenames)) foreach ($filenames as $filename) {
             if ($filename === '.' || $filename === '..') continue;
-            if(is_dir($filename)){
+            $tName = $commandPath . DIRECTORY_SEPARATOR . $filename;
+            if (is_dir($tName) && preg_match('/^[A-Z]+/', $tName) > 0) {
+                self::Init($commandPath . DIRECTORY_SEPARATOR . $filename);
+            } elseif (is_file($tName) && preg_match('/^[A-Z]+[a-zA-Z]+.php$/', $filename) > 0) {
+
+
+                $tName = str_replace([...array_keys($keyWords), '.php'], [... array_values($keyWords), ''], $tName);
+
+                $className = '';
+                foreach ($keyWords as $str) {
+                    $className = strstr($tName, $str);
+                    if (is_string($className)) break;
+                }
+
+                if (is_string($className) && class_exists($className)) {
+                    $r = new \ReflectionClass($className);
+                    $alias = $r->getStaticPropertyValue('Alias');
+                    if ($r->isInstantiable() && $r->isSubclassOf(CommandKernel::class) && !empty($alias)) {
+                        static::PushCommand($alias, [
+                            'class' => $className,
+                            'params' => $r->getProperty('Params')->getValue()
+                        ]);
+                    }
+                }
 
             }
-
         }
     }
+
+    /**
+     * 所有已经注册的命令行
+     *
+     * @return array
+     */
+    public static function AllCommands(): array
+    {
+        return static::$Commands;
+    }
+
+    /**
+     * 自动处理command命令
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function CommandAutoHandle(): mixed
+    {
+        $params = cliParams();
+        $alias = $params[1] ?? '';
+        $className = static::$Commands[$alias] ?? '';
+        if (empty($className)) {
+            echo '没有要运行的命令', PHP_EOL;
+            return 0;
+        }
+        return static::Dispatch($className, $params);
+    }
+
 }
